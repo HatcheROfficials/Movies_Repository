@@ -16,16 +16,18 @@ function getSearchTerm(){
 var searchBtn = document.getElementById("searchBtn");
 searchBtn.addEventListener("click",getSearchTerm);
 
-var defaultTitle = "avatar";
+var defaultTitle = "aliens";
 
-function fetchData(){
-    fetch("http://www.omdbapi.com/?s=" + defaultTitle + "&apikey=55a1897f")
-    .then((data)=>data.json())
-    .then((data)=>{
-        fetch("http://www.omdbapi.com/?i=" + data.Search[0]["imdbID"] + "&apikey=55a1897f")
-        .then((data)=>data.json())
-        .then(displayPoster)
-    });
+async function fetchData(){
+    try {
+        const allMovies = await fetch("http://www.omdbapi.com/?s=" + defaultTitle + "&apikey=55a1897f");
+        const allMoviesJson = await allMovies.json();
+        const firstMovie = await fetch("http://www.omdbapi.com/?i=" + allMoviesJson.Search[0]["imdbID"] + "&apikey=55a1897f");
+        const firstMovieJson = await firstMovie.json();
+        displayPoster(firstMovieJson);
+    } catch(error) {
+        console.log(error);
+    }
 }
 fetchData();
 
