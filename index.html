@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="shortcut icon" type="image/x-icon"
-        href="https://png.pngtree.com/element_our/20190603/ourmid/pngtree-movie-board-icon-image_1455346.jpg">
+        href="https://github.com/HatcheROfficials/Movies_App/blob/master/assets/logo.png?raw=true">
     <script src="https://kit.fontawesome.com/a84f2d2288.js" crossorigin="anonymous"></script>
     <meta name="description" content="Movie Search">
     <meta name="keywords" content="Movie Repository">
@@ -19,27 +19,37 @@
 <body>
     <header id="header">
         <div id="logo">
-            <div>
-                <img src="https://i.pinimg.com/736x/aa/f7/05/aaf705e06726ce3881288ae4be3ac5fe.jpg">
-            </div>
-            Movie Repository
+            <div id="logoImg"></div>
+            <span id="logoText">Movie Repository</span>
         </div>
 
-        <section id="navMenuContainer">
+        <section id="topNavContainer">
             <section class="topNav">
-                <li data-id="1" class="active">Home</li>
-                <li data-id="2">Movies</li>
-                <li data-id="3">Favourites</li>
                 <li class="hamburger">
                     <i class="fa-solid fa-bars"></i>
                 </li>
+                <li data-id="1" class="active">Home</li>
+                <li data-id="2">Movies</li>
+                <li data-id="3">Favourites</li>
             </section>
         </section>
+
+        <div id="searchIcon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
     </header>
 
     <section id="contentFooter">
         <section id="content">
-
+            <article id="home" data-id="1">
+                HOME
+            </article>
+            <article id="movies" data-id="2">
+                MOVIES
+            </article>
+            <article id="favourites" data-id="3">
+                FAVOURITES
+            </article>
         </section>
         <footer>
 

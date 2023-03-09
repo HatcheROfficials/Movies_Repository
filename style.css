@@ -1,3 +1,156 @@
-body{
-    background-color: red;
+html {
+    font-size: 16px + 1vw;
 }
+
+body {
+    font-family: Open Sans Semi-Bold, sans-serif;
+    margin: 0;
+
+    height: 100vh;
+    width: 100vw;
+
+    display: grid;
+    grid-template-rows: 3rem 1fr;
+
+    background-image: linear-gradient(var(--baseColorDark), var(--baseColorLight) 15%, var(--baseColorLight) 85%, var(--baseColorDark));
+    color: var(--baseFontColor);
+}
+
+body * {
+    border: 1px solid white none;
+}
+
+:root {
+    --baseColorLight: #1e1c4d;
+    --baseColorDark: #12102d;
+
+    --baseFontColor: white;
+    --selectFontColor: rgb(207, 206, 206);
+}
+
+/* HEADER FOR MOBILE */
+@media screen and (max-width: 600px) {
+    #header {
+        position: relative;
+    }
+
+    #logo {
+        position: absolute;
+        transform: translate(calc(50vw - 50%), calc(1.5rem - 50%));
+        top: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    #logoImg {
+        width: 2rem;
+        aspect-ratio: 1/1;
+        background-image: url("https://github.com/HatcheROfficials/Movies_App/blob/master/assets/logo.png?raw=true");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+
+        margin-right: 0.5rem;
+    }
+
+    #searchIcon {
+        position: absolute;
+        transform: translate(calc(97vw - 100%), calc(1.5rem - 50%));
+        font-size: 2rem;
+    }
+
+    #topNavContainer {
+        z-index: 5;
+        position: absolute;
+        height: 0;
+        overflow: visible;
+        transform: translate(0, 0);
+        font-size: 1.5rem;
+        list-style: none;
+    }
+    #topNavContainer li:first-child{
+        position: relative;
+        transform: translate(1rem, 0.5rem);
+    }
+
+    .topNav li:not(:first-child) {
+        display: none;
+    }
+
+    #topNavContainer .topNav.responsive {
+        background-color: var(--baseColorDark);
+        width: 100vw;
+    }
+
+    #topNavContainer .topNav.responsive li {
+        display: block;
+    }
+    #topNavContainer .topNav.responsive li.active {
+        background-color: var(--baseColorLight);
+    }
+
+    #topNavContainer .topNav.responsive li:not(:first-child) {
+        font-size: 1rem;
+        margin-top: 1.5rem;
+        padding: 1rem
+    }
+}
+
+/* HEADER FOR DESKTOP */
+@media screen and (min-width: 600px) {
+    #header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #logo {
+        order: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 1rem;
+    }
+    #logoImg {
+        width: 2rem;
+        aspect-ratio: 1/1;
+        background-image: url("https://github.com/HatcheROfficials/Movies_App/blob/master/assets/logo.png?raw=true");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+
+        margin-right: 0.5rem;
+    }
+
+    #topNavContainer {
+        order: 2;
+    }
+
+    .topNav {
+        display: flex;
+        font-size: 1rem;
+    }
+
+    #topNavContainer .topNav li {
+        display: block;
+        padding: 0.5rem 2rem 0.5rem 2rem;
+        border-radius: 0.5rem;
+    }
+
+    #topNavContainer .topNav li.active{
+        background-color: var(--baseColorDark);
+    }
+    #topNavContainer .topNav li:hover{
+        color: var(--selectFontColor);
+    }
+    #topNavContainer .topNav li:first-child {
+        display: none;
+    }
+
+    #searchIcon {
+        font-size: 1.5rem;
+        order: 3;
+        margin-right: 1rem;
+    }
+}
+
