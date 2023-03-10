@@ -50,38 +50,79 @@ navItem.forEach((item) => {
     item.addEventListener("click", navMenuItemSelect);
 })
 
-// HOME SECTION
-var featuredMoviesList = ["mad+max+fury+road", "passion+of+the","cast+away", "avatar", "the+matrix", "bitter", "predators", "mona", "castaway", "xxx", "3+idiots"];
-var featuredMoviesData = new Array();
 
+// CONTENT SECTION
+
+// Function fetches data for movies in moviesList and stroes in given storageAddress
 async function fetchMovieData(moviesList, storageAddress) {
     for (var i = 0; i < moviesList.length; i++) {
         try {
             const movie = await fetch("http://www.omdbapi.com/?t=" + moviesList[i] + "&apikey=55a1897f");
             const movieJson = await movie.json();
             storageAddress.push(movieJson);
-            insertFeaturesTab(movieJson["Poster"]);
         } catch (error) {
             console.log(error);
-            console.log("No movie found for movie name " +  moviesList[i]);
+            // console.log("No movie found for movie name " + moviesList[i]);
         }
     }
 }
-fetchMovieData(featuredMoviesList,featuredMoviesData);
 
-function insertFeaturesTab(url){
-    const newPoster = document.createElement("div");
-    newPoster.innerHTML = '<img src=' + url + '>';
-    var featureContainer = document.querySelector(".carausel");
-    featureContainer.appendChild(newPoster);
+// HOME SECTION
+
+// Featured Today
+var featuredMoviesList = ["mad+max+fury+road", "passion+of+the", "cast+away", "avatar", "the+matrix", "bitter", "predators", "mona", "castaway", "xxx", "3+idiots"];
+var featuredMoviesData = new Array();
+
+// Fetching and populating featured movie data
+fetchMovieData(featuredMoviesList, featuredMoviesData)
+    .then(insertFeaturedMovies);
+
+// Function to insert movies in featured list into the featured section
+function insertFeaturedMovies() {
+    for (var i = 0; i < featuredMoviesData.length; i++) {
+        const newPoster = document.createElement("div");
+        newPoster.innerHTML = '<img src=' + featuredMoviesData[i]["Poster"] + '>';
+        var featureContainer = document.querySelector("#featured div.carausel");
+        featureContainer.appendChild(newPoster);
+    }
 }
-// display movies poster in featured list
 
+// Up Coming (only 2 movies)
+var upcomingMoviesList = ["avatar+3", "deadpool+3"];
+var upcomingMoviesData = new Array();
 
-// collecting featured movies details
-// for(var i=0; i<featuredMoviesList.length; i++){
+// Fetching and populating featured movie data
+fetchMovieData(upcomingMoviesList, upcomingMoviesData)
+    .then(insertupcomingMovies);
 
-// }
+// Function to insert movies in featured list into the featured section
+function insertupcomingMovies() {
+    for(var i=0; i<upcomingMoviesData.length; i++){
+        const newPoster = document.createElement("div");
+        newPoster.innerHTML = '<div class="secondaryHeading marginBottom">' + upcomingMoviesData[i]["Title"] + '</div> <img src="' + upcomingMoviesData[i]["Poster"] + '"> <div class="contentText">Expected Release Date: ' + upcomingMoviesData[i]["Year"] + '</div>';
+        var upcomingContainer = document.querySelector("#upcoming>div:last-child");
+        upcomingContainer.appendChild(newPoster);
+    }
+}
+
+// Hollywood Classics
+var hollywoodMoviesList = ["free+solo", "la+la+land", "edge+of+tomorrow", "the+wolf+of+wall+street", "wall+e", "ratatouille", "paranormal+activity", "texas", "green+lantern", "up", "richie+rich", "finding+nemo", "fast+five"];
+var hollywoodMoviesData = new Array();
+
+// Fetching and populating featured movie data
+fetchMovieData(hollywoodMoviesList, hollywoodMoviesData)
+    .then(insertHollywoodMovies);
+
+// Function to insert movies in featured list into the featured section
+function insertHollywoodMovies() {
+    for (var i = 0; i < hollywoodMoviesData.length; i++) {
+        const newPoster = document.createElement("div");
+        newPoster.innerHTML = '<img src=' + hollywoodMoviesData[i]["Poster"] + '>';
+        var hollywoodContainer = document.querySelector("#hollywood div.carausel");
+        hollywoodContainer.appendChild(newPoster);
+    }
+}
+
 
 // SEARCH FUNCTIONALITY
 // function to activate search bar

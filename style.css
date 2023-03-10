@@ -212,19 +212,35 @@ body * {
     padding: 1rem;
     overflow-x: hidden;
 }
-
+#contentFooter::-webkit-scrollbar{
+    display: none;
+}
 /* HOME SECTION */
 .falseBorder {
     border: 2px solid var(--headingFontColor) none;
+}
+.marginTop{
+    margin-top: 1rem;
+}
+.marginBottom{
+    margin-bottom: 1rem;
 }
 
 .sectionTitle {
     font-size: 1.5rem;
     color: var(--headingFontColor);
     font-weight: bold;
-    margin-bottom: 1rem;
 }
-
+.secondaryHeading {
+    font-size: 1rem;
+    color: var(--headingFontColor);
+    font-weight: bold;
+}
+.contentText{
+    font-size: 1rem;
+    color: var(--selectFontColor);
+    font-weight: bold;
+}
 /* Carousel */
 #featured {
     overflow: hidden;
@@ -238,7 +254,8 @@ body * {
 }
 .carausel img{
     height: 30vh;
-    margin: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.5s ease-in-out;
 }
 
 ::-webkit-scrollbar{
@@ -248,14 +265,36 @@ body * {
     background: var(--headingFontColor);
 }
 
+/* UPCOMING SECTION */
+
+#upcoming div:last-child{
+    display: flex;
+    justify-content: flex-start;
+}
+#upcoming>div:last-child div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.5rem;
+}
+#upcoming>div:last-child img{
+    height: 60vh;
+}
+
+footer{
+    height: 30vh;
+    background-color: var(--baseColorDark);
+}
 @media screen and (min-width: 600px) {
     ::-webkit-scrollbar{
         height: 0.5rem;
     }
-    *:hover::-webkit-scrollbar{
-        height: 1rem;
-    }
     ::-webkit-scrollbar-thumb{
         background: var(--headingFontColor);
+    }
+
+    .carausel img:hover{
+        margin-left: 2rem;
+        margin-right: 2rem;
     }
 }
