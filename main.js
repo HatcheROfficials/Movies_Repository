@@ -1,26 +1,26 @@
 var hamburger = document.querySelector(".hamburger");
 
-function responsiveMenu(){
+function responsiveMenu() {
     var navMenu = document.querySelector(".topNav");
-    if(navMenu.classList.contains("responsive")){
+    if (navMenu.classList.contains("responsive")) {
         navMenu.classList.remove("responsive");
-    } else{
+    } else {
         navMenu.classList.add("responsive");
     }
 }
 
-hamburger.addEventListener("click",responsiveMenu);
+hamburger.addEventListener("click", responsiveMenu);
 
 // Select Nav Menu Item
-function navMenuItemSelect(event){
+function navMenuItemSelect(event) {
     var navMenuList = document.querySelectorAll(".topNav li");
 
-    for(var i=0; i<navMenuList.length; i++){
-        if(navMenuList[i].classList.contains("active")){
+    for (var i = 0; i < navMenuList.length; i++) {
+        if (navMenuList[i].classList.contains("active")) {
             var currentActive = navMenuList[i];
         }
     }
-    
+
     currentActive.classList.remove("active");
     event.target.classList.add("active");
 
@@ -28,15 +28,15 @@ function navMenuItemSelect(event){
 }
 
 // Display active content in the content area
-function displayActiveArticle(activeDataId){
+function displayActiveArticle(activeDataId) {
     var articles = document.querySelectorAll("#content>article");
 
-    for(var i=0; i<articles.length; i++){
-        if(articles[i].getAttribute("data-id") == activeDataId){
+    for (var i = 0; i < articles.length; i++) {
+        if (articles[i].getAttribute("data-id") == activeDataId) {
             articles[i].style.display = "";
             // articles[i].style.width = "100%";
             // articles[i].style.height = "100%";
-        } else{
+        } else {
             articles[i].style.display = "none";
         }
     }
@@ -45,8 +45,25 @@ function displayActiveArticle(activeDataId){
 // Apply event listner to nav menu item
 var navItem = document.querySelectorAll(".topNav li:not(:first-child)");
 navItem.forEach((item) => {
-    item.addEventListener("click",navMenuItemSelect);
+    item.addEventListener("click", navMenuItemSelect);
 })
 
 // display default tab
-document.addEventListener("load",displayActiveArticle(1));
+document.addEventListener("load", displayActiveArticle(1));
+
+
+function searchIconClick() {
+    var searchBar = document.querySelector("#searchIcon>input");
+    var searchContainer = document.querySelector("#searchIcon");
+
+    if(searchContainer.classList.contains("searchActive")){
+        searchContainer.classList.remove("searchActive");
+        searchBar.classList.add("noDisplay");
+    } else{
+        searchContainer.classList.add("searchActive");
+        searchBar.classList.remove("noDisplay");
+    }
+}
+
+var searchIcon = document.querySelector("#searchIcon>i");
+searchIcon.addEventListener("click", searchIconClick);
