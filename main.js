@@ -30,16 +30,24 @@ function navMenuItemSelect(event) {
 // Display active content in the content area
 function displayActiveArticle(activeDataId) {
     var articles = document.querySelectorAll("#content>article");
+    var topNav = document.querySelectorAll(".topNav>li:not(:first-child)");
 
     for (var i = 0; i < articles.length; i++) {
         if (articles[i].getAttribute("data-id") == activeDataId) {
             articles[i].style.display = "";
-            articles[i].classList.add("active");
+            // articles[i].classList.add("active");
             // articles[i].style.width = "100%";
             // articles[i].style.height = "100%";
         } else {
             articles[i].style.display = "none";
             articles[i].classList.remove("active");
+        }
+    }
+    for(var i=0; i<topNav.length; i++){
+        if(topNav[i].getAttribute("data-id") == activeDataId){
+            topNav[i].classList.add("active")
+        } else{
+            topNav[i].classList.remove("active");
         }
     }
 }
