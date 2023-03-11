@@ -43,10 +43,10 @@ function displayActiveArticle(activeDataId) {
             articles[i].classList.remove("active");
         }
     }
-    for(var i=0; i<topNav.length; i++){
-        if(topNav[i].getAttribute("data-id") == activeDataId){
+    for (var i = 0; i < topNav.length; i++) {
+        if (topNav[i].getAttribute("data-id") == activeDataId) {
             topNav[i].classList.add("active")
-        } else{
+        } else {
             topNav[i].classList.remove("active");
         }
     }
@@ -61,7 +61,9 @@ navItem.forEach((item) => {
 
 // CONTENT SECTION
 
+// All movies displayed on home page
 var allFeaturedMovies = [];
+
 // Function fetches data for movies in moviesList and stroes in given storageAddress
 async function fetchMovieData(moviesList, storageAddress) {
     for (var i = 0; i < moviesList.length; i++) {
@@ -74,6 +76,18 @@ async function fetchMovieData(moviesList, storageAddress) {
             // console.log("No movie found for movie name " + moviesList[i]);
         }
     }
+}
+
+async function fetchMovieFromID(imdbID, arrarToPushTo) {
+    try {
+        const movie = await fetch("http://www.omdbapi.com/?i=" + imdbID + "&apikey=55a1897f");
+        const movieJson = await movie.json();
+        arrarToPushTo.push(movieJson);
+    } catch (error) {
+        console.log(error);
+        console.log("No movie found with id " + imdbID);
+    }
+
 }
 
 // HOME SECTION
@@ -108,7 +122,7 @@ fetchMovieData(upcomingMoviesList, upcomingMoviesData)
 // Function to insert movies in featured list into the featured section
 function insertupcomingMovies() {
     allFeaturedMovies.push(...upcomingMoviesData);
-    for(var i=0; i<upcomingMoviesData.length; i++){
+    for (var i = 0; i < upcomingMoviesData.length; i++) {
         const newPoster = document.createElement("div");
         newPoster.innerHTML = '<div class="secondaryHeading marginBottom">' + upcomingMoviesData[i]["Title"] + '</div> <img src="' + upcomingMoviesData[i]["Poster"] + '"> <div class="contentText">Expected Release Date: ' + upcomingMoviesData[i]["Year"] + '</div>';
         var upcomingContainer = document.querySelector("#upcoming>div:last-child");
@@ -121,13 +135,12 @@ var hollywoodMoviesList = ["free+solo", "la+la+land", "edge+of+tomorrow", "the+w
 var hollywoodMoviesData = new Array();
 
 // Fetching and populating featured movie data
-fetchMovieData(hollywoodMoviesList, hollywoodMoviesData)
+var hollywoodMovieFetchCall = fetchMovieData(hollywoodMoviesList, hollywoodMoviesData)
     .then(insertHollywoodMovies);
 
 // Function to insert movies in featured list into the featured section
 function insertHollywoodMovies() {
     allFeaturedMovies.push(...hollywoodMoviesData);
-    displayMovieDetails(allFeaturedMovies[9]["Poster"]); // Remove later
 
     for (var i = 0; i < hollywoodMoviesData.length; i++) {
         const newPoster = document.createElement("div");
@@ -137,38 +150,136 @@ function insertHollywoodMovies() {
     }
 }
 
-function eventDeligation(event){
-    if(event.target.tagName == "IMG"){
+// MOVIES SECTION
+// Movie section default movie is the first movie in hollywood section
+async function setDefaultMovieSection() {
+    try {
+        await hollywoodMovieFetchCall;
+        displayMovieDetails(hollywoodMoviesData[2]["Poster"]);
+    } catch {
+        console.log("someting wrong in movies section-setting default");
+    }
+}
+setDefaultMovieSection();
+
+function displayMovieDetails(url) {
+    var m = allFeaturedMovies.filter((item) => {
+        return item["Poster"] == url;
+    })[0];
+
+    var movieSection = document.getElementById("movies");
+
+    movieSection.innerHTML =
+        '<div id="mTitle">' + m["Title"] + '</div>' +
+        '<div id="mPoster"> <img src="' + m["Poster"] + '"></div>' +
+        '<button id="' + m["imdbID"] + '">Add To Favourites</button>' +
+        '<div id="mPlot">' + m["Plot"] + '</div>' +
+        '<div id="mRating">IMDB Rating</div> <div>' + m["imdbRating"] + '</div>' +
+        '<div id="mGenre">Genre</div> <div>' + m["Genre"] + '</div>' +
+        '<div id="mRuntime">Run Time</div> <div>' + m["Runtime"] + '</div>' +
+        '<div id="mLanguage">Languages</div> <div>' + m["Language"] + '</div>' +
+        '<div id="mRelease">Release Data</div> <div>' + m["Released"] + '</div>' +
+        '<div id="mCollection">Box Office Collection</div> <div>' + m["BoxOffice"] + '</div>' +
+        '<div id="mActors">Actors</div> <div>' + m["Actors"] + '</div>' +
+        '<div id="mDirector">Director</div> <div>' + m["Director"] + '</div>' +
+        '<div id="mWriter">Writer</div> <div>' + m["Writer"] + '</div>' +
+        '<div id="mAward">Awards</div> <div>' + m["Awards"] + '</div>';
+}
+
+// FAVOURITE SECTION
+
+// Favrauite movie list
+var favouriteMovies = [];
+async function setDefaultFavourites() {
+    try {
+        await hollywoodMovieFetchCall;
+        if (favouriteMovies.length == 0) {
+            favouriteMovies.push(hollywoodMoviesData[0]);
+            favouriteMovies.push(hollywoodMoviesData[1]);
+            localStorage.setItem(0, JSON.stringify(favouriteMovies[0]));
+            localStorage.setItem(1, JSON.stringify(favouriteMovies[1]));
+        }
+        displayFavouriteMovies();
+    } catch {
+        console.log("someting wrong in favourites section-setting default")
+    }
+}
+setDefaultFavourites();
+
+function displayFavouriteMovies() {
+    var favSection = document.getElementById("favourites");
+    var htmlStr = "";
+
+    for (var i = 0; i < favouriteMovies.length; i++) {
+        htmlStr += '<div id="container">' +
+            '<div id="fTitle" class="secondaryHeading">' + favouriteMovies[i]["Title"] + '</div>' +
+            '<div id="fPoster"><img src="' + favouriteMovies[i]["Poster"] + '"></div>' +
+            '<button id="' + favouriteMovies[i]["Poster"] + '">Remove From Favourites</button>' +
+            '</div>';
+    }
+
+    favSection.innerHTML = htmlStr;
+}
+async function addToFavourites(imdbID) {
+    try{
+        var exist = favouriteMovies.filter((item)=>{
+            return item["imdbID"] == imdbID;
+        });
+
+        if(exist.length == 0){
+            await fetchMovieFromID(imdbID,favouriteMovies)
+            updateLocalStorage();
+            alertNotification("Movie Added To Favourites");
+        } else {
+            alertNotification("Already added to Favourites")
+        }
+    } catch(error) {
+        console.log(error);
+        console.log("Error in adding movie to favourites")
+    } 
+}
+
+function removeFromFavourites(url) {
+    favouriteMovies = favouriteMovies.filter((item) => {
+        return item["Poster"] != url;
+    });
+
+    updateLocalStorage();
+}
+
+function updateLocalStorage() {
+    localStorage.clear();
+    for (var i = 0; i < favouriteMovies.length; i++) {
+        localStorage.setItem(i, JSON.stringify(favouriteMovies[i]));
+    }
+    displayFavouriteMovies();
+}
+
+function onLoadLocalStorageUpdateFav() {
+    for (var i = 0; i < localStorage.length; i++) {
+        favouriteMovies.push(JSON.parse(localStorage.getItem(i)));
+    }
+}
+
+function alertNotification(text){
+    alert(text);
+}
+// Event Deligation
+function eventDeligation(event) {
+    if (event.target.tagName == "IMG") {
         displayMovieDetails(event.target.getAttribute("src"));
         displayActiveArticle(2);
     }
+
+    if (event.target.tagName == "BUTTON" && event.target.textContent == "Remove From Favourites") {
+        removeFromFavourites(event.target.getAttribute("id"));
+    }
+
+    if (event.target.tagName == "BUTTON" && event.target.textContent == "Add To Favourites") {
+        addToFavourites(event.target.getAttribute("id"));
+    }
 }
-window.addEventListener("click",eventDeligation);
-
-// MOVIES SECTION
-
-
-function displayMovieDetails(url){
-    var m = allFeaturedMovies.filter((item)=>{
-        return item["Poster"] == url;
-    })[0];
-    
-    var movieSection = document.getElementById("movies");
-
-    movieSection.innerHTML = '<div id="mTitle">' + m["Title"] + '</div>' +
-    '<div id="mPoster"> <img src="'+ m["Poster"] +'"></div>' +
-    '<div id="mPlot">' + m["Plot"] + '</div>' +
-    '<div id="mRating">IMDB Rating</div> <div>' + m["imdbRating"] + '</div>' +
-    '<div id="mGenre">Genre</div> <div>' + m["Genre"] +'</div>' +
-    '<div id="mRuntime">Run Time</div> <div>'+ m["Runtime"] +'</div>' +
-    '<div id="mLanguage">Languages</div> <div>'+ m["Language"] +'</div>' +
-    '<div id="mRelease">Release Data</div> <div>'+ m["Released"] +'</div>' +
-    '<div id="mCollection">Box Office Collection</div> <div>'+ m["BoxOffice"] +'</div>' +
-    '<div id="mActors">Actors</div> <div>'+ m["Actors"] +'</div>' +
-    '<div id="mDirector">Director</div> <div>'+ m["Director"] +'</div>' +
-    '<div id="mWriter">Writer</div> <div>'+ m["Writer"] +'</div>' +
-    '<div id="mAward">Awards</div> <div>'+ m["Awards"] +'</div>';
-}
+window.addEventListener("click", eventDeligation);
 
 // SEARCH FUNCTIONALITY
 // function to activate search bar
@@ -180,7 +291,7 @@ function searchIconClick() {
     var searchContainer = document.querySelector("#searchIcon");
 
     if (searchContainer.classList.contains("searchActive")) {
-        searchContainer.classList.remove("searchActive");
+        // searchContainer.classList.remove("searchActive");
         searchBar.classList.add("noDisplay");
     } else {
         searchContainer.classList.add("searchActive");
@@ -235,5 +346,6 @@ function displaySearchResults(data) {
 // Initialize the movie app on load
 function iniializeApp() {
     displayActiveArticle(1); // show default tab on screen
+    onLoadLocalStorageUpdateFav();
 }
 window.addEventListener("load", iniializeApp);
