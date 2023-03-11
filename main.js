@@ -53,6 +53,7 @@ navItem.forEach((item) => {
 
 // CONTENT SECTION
 
+var allFeaturedMovies = [];
 // Function fetches data for movies in moviesList and stroes in given storageAddress
 async function fetchMovieData(moviesList, storageAddress) {
     for (var i = 0; i < moviesList.length; i++) {
@@ -79,6 +80,7 @@ fetchMovieData(featuredMoviesList, featuredMoviesData)
 
 // Function to insert movies in featured list into the featured section
 function insertFeaturedMovies() {
+    allFeaturedMovies.push(...featuredMoviesData);
     for (var i = 0; i < featuredMoviesData.length; i++) {
         const newPoster = document.createElement("div");
         newPoster.innerHTML = '<img src=' + featuredMoviesData[i]["Poster"] + '>';
@@ -87,8 +89,8 @@ function insertFeaturedMovies() {
     }
 }
 
-// Up Coming (only 2 movies)
-var upcomingMoviesList = ["avatar+3", "deadpool+3"];
+// Up Coming (only 2 or 3 movies)
+var upcomingMoviesList = ["avatar+3", "deadpool+3", "fast+x"];
 var upcomingMoviesData = new Array();
 
 // Fetching and populating featured movie data
@@ -97,6 +99,7 @@ fetchMovieData(upcomingMoviesList, upcomingMoviesData)
 
 // Function to insert movies in featured list into the featured section
 function insertupcomingMovies() {
+    allFeaturedMovies.push(...upcomingMoviesData);
     for(var i=0; i<upcomingMoviesData.length; i++){
         const newPoster = document.createElement("div");
         newPoster.innerHTML = '<div class="secondaryHeading marginBottom">' + upcomingMoviesData[i]["Title"] + '</div> <img src="' + upcomingMoviesData[i]["Poster"] + '"> <div class="contentText">Expected Release Date: ' + upcomingMoviesData[i]["Year"] + '</div>';
@@ -115,6 +118,9 @@ fetchMovieData(hollywoodMoviesList, hollywoodMoviesData)
 
 // Function to insert movies in featured list into the featured section
 function insertHollywoodMovies() {
+    allFeaturedMovies.push(...hollywoodMoviesData);
+    displayMovieDetails(allFeaturedMovies[9]["Poster"]); // Remove later
+
     for (var i = 0; i < hollywoodMoviesData.length; i++) {
         const newPoster = document.createElement("div");
         newPoster.innerHTML = '<img src=' + hollywoodMoviesData[i]["Poster"] + '>';
@@ -123,6 +129,38 @@ function insertHollywoodMovies() {
     }
 }
 
+function eventDeligation(event){
+    if(event.target.tagName == "IMG"){
+        displayMovieDetails(event.target.getAttribute("src"));
+        displayActiveArticle(2);
+    }
+}
+window.addEventListener("click",eventDeligation);
+
+// MOVIES SECTION
+
+
+function displayMovieDetails(url){
+    var m = allFeaturedMovies.filter((item)=>{
+        return item["Poster"] == url;
+    })[0];
+    
+    var movieSection = document.getElementById("movies");
+
+    movieSection.innerHTML = '<div id="mTitle">' + m["Title"] + '</div>' +
+    '<div id="mPoster"> <img src="'+ m["Poster"] +'"></div>' +
+    '<div id="mPlot">' + m["Plot"] + '</div>' +
+    '<div id="mRating">IMDB Rating</div> <div>' + m["imdbRating"] + '</div>' +
+    '<div id="mGenre">Genre</div> <div>' + m["Genre"] +'</div>' +
+    '<div id="mRuntime">Run Time</div> <div>'+ m["Runtime"] +'</div>' +
+    '<div id="mLanguage">Languages</div> <div>'+ m["Language"] +'</div>' +
+    '<div id="mRelease">Release Data</div> <div>'+ m["Released"] +'</div>' +
+    '<div id="mCollection">Box Office Collection</div> <div>'+ m["BoxOffice"] +'</div>' +
+    '<div id="mActors">Actors</div> <div>'+ m["Actors"] +'</div>' +
+    '<div id="mDirector">Director</div> <div>'+ m["Director"] +'</div>' +
+    '<div id="mWriter">Writer</div> <div>'+ m["Writer"] +'</div>' +
+    '<div id="mAward">Awards</div> <div>'+ m["Awards"] +'</div>';
+}
 
 // SEARCH FUNCTIONALITY
 // function to activate search bar
