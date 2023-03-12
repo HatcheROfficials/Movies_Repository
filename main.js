@@ -70,10 +70,13 @@ async function fetchMovieData(moviesList, storageAddress) {
         try {
             const movie = await fetch("http://www.omdbapi.com/?t=" + moviesList[i] + "&apikey=55a1897f");
             const movieJson = await movie.json();
+            if(movieJson["Response"] == "False"){
+                throw new Error("something worng");
+            }
             storageAddress.push(movieJson);
         } catch (error) {
-            console.log(error);
-            // console.log("No movie found for movie name " + moviesList[i]);
+            alertNotification(moviesList[i] + " Not Found !!!");
+            console.log("No movie found for movie name " + moviesList[i]);
         }
     }
 }
@@ -264,6 +267,68 @@ function onLoadLocalStorageUpdateFav() {
 function alertNotification(text){
     alert(text);
 }
+
+
+// SEARCH FUNCTIONALITY
+// function to activate search bar
+var searchIcon = document.querySelector("#searchIcon>i");
+var searchBar = document.querySelector("#searchIcon>input");
+searchIcon.addEventListener("click", searchIconClick);
+
+function searchIconClick() {
+    var searchContainer = document.querySelector("#searchIcon");
+
+    if (searchContainer.classList.contains("searchActive")) {
+        searchContainer.classList.remove("searchActive");
+        searchBar.classList.add("noDisplay");
+        // If user types nothing then close the search bar
+        if(searchBar.value == ""){
+            return;
+        }
+        searchMovie(searchBar.value);
+        searchBar.value = "";
+    } else {
+        searchContainer.classList.add("searchActive");
+        searchBar.classList.remove("noDisplay");
+    }
+}
+
+// Search movie when enter is pressed
+function searchOnEnter(event){
+    if(event.key == "Enter"){
+        searchIconClick();
+    }
+}
+searchBar.addEventListener("keydown",searchOnEnter);
+
+// Convert text entered in search bar to valid search term
+function nameToSearchTerm(title){
+    var newTitle = "";
+    for(let char of title){
+        if(char == " "){
+            newTitle += "+";
+        } else {
+            newTitle += char;
+        }
+    }
+    return newTitle;
+}
+
+// Function for search bar
+async function searchMovie(title){
+    try{
+        var movieList = [nameToSearchTerm(title)];
+        await fetchMovieData(movieList,allFeaturedMovies);
+        var movieDetails = allFeaturedMovies[allFeaturedMovies.length - 1];
+        displayMovieDetails(movieDetails["Poster"]);
+        displayActiveArticle(2);
+    } catch (error){
+        console.log(error);
+        console.log("Not able to search for the movie");
+    }
+}
+
+
 // Event Deligation
 function eventDeligation(event) {
     if (event.target.tagName == "IMG") {
@@ -280,68 +345,6 @@ function eventDeligation(event) {
     }
 }
 window.addEventListener("click", eventDeligation);
-
-// SEARCH FUNCTIONALITY
-// function to activate search bar
-var searchIcon = document.querySelector("#searchIcon>i");
-searchIcon.addEventListener("click", searchIconClick);
-
-function searchIconClick() {
-    var searchBar = document.querySelector("#searchIcon>input");
-    var searchContainer = document.querySelector("#searchIcon");
-
-    if (searchContainer.classList.contains("searchActive")) {
-        // searchContainer.classList.remove("searchActive");
-        searchBar.classList.add("noDisplay");
-    } else {
-        searchContainer.classList.add("searchActive");
-        searchBar.classList.remove("noDisplay");
-    }
-}
-
-// var searchBar = document.querySelector("#searchIcon>input");
-// function searchOnEnter(event) {
-//     if (event.key == "Enter") {
-//     }
-// }
-// searchBar.addEventListener("keydown", searchOnEnter);
-
-
-
-// MOVIE SECTION
-function initializeSearch() {
-    var search = document.querySelector("#searchIcon>input");
-    defaultTitle = search.value;
-
-    fetchData();
-}
-
-// Fetch data from API for the search term and show first result
-var defaultTitle = "avatar";
-async function fetchData() {
-    try {
-        const allMovies = await fetch("http://www.omdbapi.com/?s=" + defaultTitle + "&apikey=55a1897f");
-        const allMoviesJson = await allMovies.json();
-        const firstMovie = await fetch("http://www.omdbapi.com/?i=" + allMoviesJson.Search[0]["imdbID"] + "&apikey=55a1897f");
-        const firstMovieJson = await firstMovie.json();
-        displaySearchResults(firstMovieJson);
-    } catch (error) {
-        console.log(error);
-        console.log("May be the search bar is empty. Type something to search")
-    }
-}
-
-// Display search results on the screen
-var title = document.getElementById("title");
-var poster = document.getElementById("poster");
-var plot = document.getElementById("plot");
-
-function displaySearchResults(data) {
-    displayActiveArticle(2);
-    title.textContent = data["Title"];
-    poster.src = data["Poster"];
-    plot.textContent = data["Plot"];
-}
 
 // Initialize the movie app on load
 function iniializeApp() {
