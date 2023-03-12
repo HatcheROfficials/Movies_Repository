@@ -328,6 +328,7 @@ async function searchMovie(title){
     }
 }
 
+// Hello World
 
 // Event Deligation
 function eventDeligation(event) {
