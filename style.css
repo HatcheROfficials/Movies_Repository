@@ -84,12 +84,42 @@ body * {
 
         background-color: var(--headingFontColor);
     }
-    #searchIcon>input:focus{
+
+    #searchIcon>input:focus {
         border: 2px solid red;
     }
 
     .searchActive {
         z-index: 6;
+    }
+
+    .searchActive {
+        z-index: 6;
+    }
+
+    #searchIcon>div {
+        z-index: 8;
+        position: absolute;
+        top: 2rem;
+        right: 0;
+        left: calc(2rem - 100vw);
+        padding: 0 1rem;
+        background-color: var(--baseColorLight);
+    }
+
+    #searchIcon>div>div {
+        background-color: var(--selectFontColor);
+
+        margin: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: black;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    #searchIcon>div>div:hover {
+        background-color: var(--headingFontColor);
     }
 
     #topNavContainer {
@@ -210,14 +240,15 @@ body * {
         background-color: var(--headingFontColor);
     }
 
-    #searchIcon>input:focus{
+    #searchIcon>input:focus {
         border: 2px solid red;
     }
+
     .searchActive {
         z-index: 6;
     }
 
-    #searchIcon>div{
+    #searchIcon>div {
         z-index: 8;
         position: absolute;
         left: 0;
@@ -226,9 +257,10 @@ body * {
         padding: 0 1rem;
         background-color: var(--baseColorLight);
     }
-    #searchIcon>div>div{
+
+    #searchIcon>div>div {
         background-color: var(--selectFontColor);
-        
+
         margin: 0.5rem;
         padding: 0.5rem 1rem;
         color: black;
@@ -236,9 +268,11 @@ body * {
         font-weight: bold;
         font-size: 1rem;
     }
-    #searchIcon>div>div:hover{
+
+    #searchIcon>div>div:hover {
         background-color: var(--headingFontColor);
     }
+
     .noDisplay {
         display: none;
     }
@@ -324,9 +358,10 @@ body * {
 
 @media screen and (min-width: 600px) {
 
-    #mantra{
+    #mantra {
         width: 50%;
     }
+
     /* Mantra */
     #mantra div:first-child {
         font-size: 3rem;
@@ -358,7 +393,7 @@ body * {
 }
 
 /* MOVIES SECTION */
-#movies{
+#movies {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -366,21 +401,24 @@ body * {
     gap: 1rem;
 }
 
-#movies div{
+#movies div {
     font-size: 1.2rem;
     text-align: center;
 }
-#movies #mTitle{
+
+#movies #mTitle {
     grid-area: 1/1/2/3;
     font-size: 1.5rem;
     color: var(--headingFontColor);
     font-weight: bold;
 }
-#movies #mPoster{
+
+#movies #mPoster {
     grid-area: 2/1/3/3;
     text-align: center;
 }
-#movies button{
+
+#movies button {
     grid-area: 3/1/4/3;
     padding: 1rem;
     font-size: 1rem;
@@ -389,51 +427,59 @@ body * {
     color: black;
     font-weight: bold;
 }
+
 @media screen and (min-width: 600px) {
-    #movies button{
+    #movies button {
         width: 50%;
-        transform: translate(calc(50vw - 50%),0);
+        transform: translate(calc(50vw - 50%), 0);
     }
 }
-#movies button:hover{
+
+#movies button:hover {
     background-color: rgb(6, 238, 6);
     border: 2px solid green;
 }
-#movies #mPlot{
+
+#movies #mPlot {
     font-size: 1.2rem;
     grid-area: 4/1/5/3;
     color: var(--headingFontColor);
     margin-bottom: 2rem;
 }
-#movies div:nth-child(2n+5){
+
+#movies div:nth-child(2n+5) {
     border-right: 2px solid var(--headingFontColor);
     color: var(--selectFontColor);
     text-align: right;
     padding-right: 2rem;
 }
-#movies div:nth-child(2n+6){
+
+#movies div:nth-child(2n+6) {
     /* border-left: 2px solid var(--headingFontColor); */
     text-align: left;
     padding-left: 1rem;
 }
 
 /* FAVOURITE SECTION */
-#favourites{
+#favourites {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
 }
-#favourites>div{
+
+#favourites>div {
     margin-top: 3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-#favourites>div img{
+
+#favourites>div img {
     margin: 1rem;
     height: 40vh;
 }
-#favourites>div button{
+
+#favourites>div button {
     padding: 1rem;
     font-size: 1rem;
     background-color: var(--headingFontColor);
@@ -441,32 +487,39 @@ body * {
     color: black;
     font-weight: bold;
 }
-#favourites>div button:hover{
+
+#favourites>div button:hover {
     background-color: rgb(250, 136, 136);
     border: 2px solid red;
 }
 
 @media screen and (min-width: 600px) {
-    #movies{
+    #movies {
         gap: 1rem;
     }
-    #movies div{
+
+    #movies div {
         font-size: 1.2rem;
     }
-    #movies #mTitle{  
+
+    #movies #mTitle {
         font-size: 2rem;
     }
-    #movies #mPlot{
+
+    #movies #mPlot {
         font-size: 1.4rem;
         margin-bottom: 2rem;
     }
-    #movies div:nth-child(2n+4){
+
+    #movies div:nth-child(2n+4) {
         padding-right: 2rem;
     }
-    #movies div:nth-child(2n+5){
+
+    #movies div:nth-child(2n+5) {
         padding-left: 1rem;
     }
 }
+
 /* FOOTER */
 footer {
     height: 30vh;
