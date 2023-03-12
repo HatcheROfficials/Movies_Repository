@@ -13,14 +13,14 @@
     <meta name="author" content="Ashish Sahu">
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/CSS" href="style.css" />
-    <title>Movie Repository</title>
+    <title>Movies Repository</title>
 </head>
 
 <body>
     <header id="header">
         <div id="logo">
             <div id="logoImg"></div>
-            <span id="logoText">Movie Repository</span>
+            <span id="logoText">Movies Repository</span>
         </div>
 
         <section id="topNavContainer">
@@ -29,13 +29,18 @@
                     <i class="fa-solid fa-bars"></i>
                 </li>
                 <li data-id="1" class="active">Home</li>
-                <li data-id="2">Movies</li>
+                <li data-id="2">Details</li>
                 <li data-id="3">Favourites</li>
             </section>
         </section>
 
         <div id="searchIcon">
             <input type="text" placeholder="Search for Movies" class="noDisplay">
+            <div id="searchResults">
+                <!-- <div>
+
+                </div> -->
+            </div>
             <i class="fa-solid fa-magnifying-glass"></i>
         </div>
     </header>
@@ -44,10 +49,15 @@
         <section id="content">
             <article id="home" data-id="1">
                 <section id="mantra" class="falseBorder">
-                    <div class="sectionTitle marginTop">Hollywood Movies</div>
-                    <div class="contentText">Action, romance, comedy, fantasy -- Hollywood movies
+                    <div class="sectionTitle marginTop">Movies Repository</div>
+                    <div class="contentText">
+                        A Repository of Movies with detailed information. <br><br>
+                        Action, romance, comedy, fantasy -- We
                         have it all. Our diverse collection delivers the best that
-                        Tinseltown has to offer.
+                        Tinseltown has to offer. <br><br>
+                        Search for any movies you want.... <br> 
+                        Or <br> 
+                        Save them as you Favourites....
                     </div>
                 </section>
 

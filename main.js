@@ -64,27 +64,31 @@ navItem.forEach((item) => {
 // All movies displayed on home page
 var allFeaturedMovies = [];
 
-// Function fetches data for movies in moviesList and stroes in given storageAddress
+// Fetch and Store Movies Fron Movie Name
 async function fetchMovieData(moviesList, storageAddress) {
     for (var i = 0; i < moviesList.length; i++) {
         try {
             const movie = await fetch("http://www.omdbapi.com/?t=" + moviesList[i] + "&apikey=55a1897f");
             const movieJson = await movie.json();
-            if(movieJson["Response"] == "False"){
+            if (movieJson["Response"] == "False") {
                 throw new Error("something worng");
             }
             storageAddress.push(movieJson);
         } catch (error) {
             alertNotification(moviesList[i] + " Not Found !!!");
-            console.log("No movie found for movie name " + moviesList[i]);
+            console.log("(fetchMovieData Function) No movie found with movie name " + moviesList[i]);
         }
     }
 }
 
+// Fetch and Store Movies Fron Movie imdbID
 async function fetchMovieFromID(imdbID, arrarToPushTo) {
     try {
         const movie = await fetch("http://www.omdbapi.com/?i=" + imdbID + "&apikey=55a1897f");
         const movieJson = await movie.json();
+        if (movieJson["Response"] == "False") {
+            throw new Error("something worng");
+        }
         arrarToPushTo.push(movieJson);
     } catch (error) {
         console.log(error);
@@ -115,7 +119,7 @@ function insertFeaturedMovies() {
 }
 
 // Up Coming (only 2 or 3 movies)
-var upcomingMoviesList = ["avatar+3", "deadpool+3", "fast+x"];
+var upcomingMoviesList = ["avatar+3", "deadpool+3", "kung fu panda 4"];
 var upcomingMoviesData = new Array();
 
 // Fetching and populating featured movie data
@@ -153,25 +157,22 @@ function insertHollywoodMovies() {
     }
 }
 
-// MOVIES SECTION
-// Movie section default movie is the first movie in hollywood section
-async function setDefaultMovieSection() {
-    try {
-        await hollywoodMovieFetchCall;
-        displayMovieDetails(hollywoodMoviesData[2]["Poster"]);
-    } catch {
-        console.log("someting wrong in movies section-setting default");
-    }
-}
-setDefaultMovieSection();
+// DETAILS SECTION
+// Setting Default Movie in Details section - The Terminator
+fetchMovieData(["the+terminator"], allFeaturedMovies)
+    .then(() => {
+        displayMovieDetails(allFeaturedMovies[allFeaturedMovies.length - 1]["Poster"]);
+    });
 
+// Display movies in Details Section with URL of movie poster
+// The Movie must be present in "allFeaturedMovies" allay beforehand
 function displayMovieDetails(url) {
     var m = allFeaturedMovies.filter((item) => {
         return item["Poster"] == url;
     })[0];
 
     var movieSection = document.getElementById("movies");
-
+    // console.log(m);
     movieSection.innerHTML =
         '<div id="mTitle">' + m["Title"] + '</div>' +
         '<div id="mPoster"> <img src="' + m["Poster"] + '"></div>' +
@@ -193,22 +194,36 @@ function displayMovieDetails(url) {
 
 // Favrauite movie list
 var favouriteMovies = [];
-async function setDefaultFavourites() {
-    try {
-        await hollywoodMovieFetchCall;
-        if (favouriteMovies.length == 0) {
-            favouriteMovies.push(hollywoodMoviesData[0]);
-            favouriteMovies.push(hollywoodMoviesData[1]);
-            localStorage.setItem(0, JSON.stringify(favouriteMovies[0]));
-            localStorage.setItem(1, JSON.stringify(favouriteMovies[1]));
-        }
+
+// Add movies to favourites with imdbID passed
+// Movie can only be added if already present in "allFeaturedMovies" Array
+async function addToFavourites(imdbID) {
+    var exist = favouriteMovies.filter((item) => {
+        return item["imdbID"] == imdbID;
+    });
+
+    if (exist.length == 0) {
+        await fetchMovieFromID(imdbID, allFeaturedMovies);
+        var movieObj = allFeaturedMovies[allFeaturedMovies.length - 1];
+        favouriteMovies.push(movieObj);
+        syncLocalStorageWithFavourites();
         displayFavouriteMovies();
-    } catch {
-        console.log("someting wrong in favourites section-setting default")
+        alertNotification("Movie Added To Favourites");
+    } else {
+        alertNotification("Already added to Favourites");
     }
 }
-setDefaultFavourites();
 
+// Remove movies from favourite section
+function removeFromFavourites(imdbID) {
+    favouriteMovies = favouriteMovies.filter((item) => {
+        return item["imdbID"] != imdbID;
+    });
+    syncLocalStorageWithFavourites();
+    displayFavouriteMovies();
+}
+
+// Display movies in Favouries section that are present in "favouriteMovies" Array
 function displayFavouriteMovies() {
     var favSection = document.getElementById("favourites");
     var htmlStr = "";
@@ -217,40 +232,14 @@ function displayFavouriteMovies() {
         htmlStr += '<div id="container">' +
             '<div id="fTitle" class="secondaryHeading">' + favouriteMovies[i]["Title"] + '</div>' +
             '<div id="fPoster"><img src="' + favouriteMovies[i]["Poster"] + '"></div>' +
-            '<button id="' + favouriteMovies[i]["Poster"] + '">Remove From Favourites</button>' +
+            '<button id="' + favouriteMovies[i]["imdbID"] + '">Remove From Favourites</button>' +
             '</div>';
     }
-
     favSection.innerHTML = htmlStr;
 }
-async function addToFavourites(imdbID) {
-    try{
-        var exist = favouriteMovies.filter((item)=>{
-            return item["imdbID"] == imdbID;
-        });
 
-        if(exist.length == 0){
-            await fetchMovieFromID(imdbID,favouriteMovies)
-            updateLocalStorage();
-            alertNotification("Movie Added To Favourites");
-        } else {
-            alertNotification("Already added to Favourites")
-        }
-    } catch(error) {
-        console.log(error);
-        console.log("Error in adding movie to favourites")
-    } 
-}
-
-function removeFromFavourites(url) {
-    favouriteMovies = favouriteMovies.filter((item) => {
-        return item["Poster"] != url;
-    });
-
-    updateLocalStorage();
-}
-
-function updateLocalStorage() {
+// Sync local storage with favourites
+function syncLocalStorageWithFavourites() {
     localStorage.clear();
     for (var i = 0; i < favouriteMovies.length; i++) {
         localStorage.setItem(i, JSON.stringify(favouriteMovies[i]));
@@ -258,13 +247,25 @@ function updateLocalStorage() {
     displayFavouriteMovies();
 }
 
-function onLoadLocalStorageUpdateFav() {
+// Updatae "favouriteMovies" list onload
+async function onLoadLocalStorageUpdateFav() {
     for (var i = 0; i < localStorage.length; i++) {
         favouriteMovies.push(JSON.parse(localStorage.getItem(i)));
+        allFeaturedMovies.push(JSON.parse(localStorage.getItem(i)));
     }
+
+    // Add one movie in Favourites List by default if no movie is present
+    // Also added default movie to allFeaturedMovies
+    if (favouriteMovies.length == 0) {
+        await fetchMovieData(["deep+blue+sea"], allFeaturedMovies);
+        favouriteMovies.push(allFeaturedMovies[allFeaturedMovies.length - 1]);
+        syncLocalStorageWithFavourites();
+    }
+    displayFavouriteMovies();
 }
 
-function alertNotification(text){
+// Popup notification
+function alertNotification(text) {
     alert(text);
 }
 
@@ -275,37 +276,75 @@ var searchIcon = document.querySelector("#searchIcon>i");
 var searchBar = document.querySelector("#searchIcon>input");
 searchIcon.addEventListener("click", searchIconClick);
 
+// Search when search icon is clicked
 function searchIconClick() {
+    showHideSearchBar();
+    // If user types nothing then close the search bar
+    if (searchBar.value == "") {
+        return;
+    } else {
+        searchMovieByTitle(searchBar.value);
+    }
+}
+
+// Search movie when enter is pressed
+function searchOnEnter(event) {
+    if (event.key == "Enter") {
+        searchIconClick();
+    } else {
+        displaySuggestedSearchResult(searchBar.value);
+    }
+}
+searchBar.addEventListener("keyup", searchOnEnter);
+
+// Show hide search bar
+function showHideSearchBar() {
     var searchContainer = document.querySelector("#searchIcon");
 
     if (searchContainer.classList.contains("searchActive")) {
         searchContainer.classList.remove("searchActive");
         searchBar.classList.add("noDisplay");
-        // If user types nothing then close the search bar
-        if(searchBar.value == ""){
-            return;
-        }
-        searchMovie(searchBar.value);
-        searchBar.value = "";
+
     } else {
         searchContainer.classList.add("searchActive");
         searchBar.classList.remove("noDisplay");
     }
 }
 
-// Search movie when enter is pressed
-function searchOnEnter(event){
-    if(event.key == "Enter"){
-        searchIconClick();
+
+// Function for search bar
+async function searchMovieByTitle(title) {
+    try {
+        var movieList = [title];
+        await fetchMovieData(movieList, allFeaturedMovies);
+        var movieDetails = allFeaturedMovies[allFeaturedMovies.length - 1];
+        displayMovieDetails(movieDetails["Poster"]);
+        removeSuggestedSearchFromUI();
+        searchBar.value = "";
+        displayActiveArticle(2);
+    } catch (error) {
+        console.log(error);
+        console.log("Not able to search for the movie");
     }
 }
-searchBar.addEventListener("keydown",searchOnEnter);
 
-// Convert text entered in search bar to valid search term
-function nameToSearchTerm(title){
+// Fetches top search result
+async function fetchSuggestedSearchResults(searchText) {
+    try {
+        const movie = await fetch("http://www.omdbapi.com/?s=" + searchText + "&apikey=55a1897f");
+        const movieJson = await movie.json();
+        return movieJson["Search"];
+    } catch (error) {
+        // alertNotification(searchText + " Not Found !!!");
+        console.log("No movie found with movie name " + searchText);
+    }
+}
+
+
+function movieTitleToID(title) {
     var newTitle = "";
-    for(let char of title){
-        if(char == " "){
+    for (let char of title) {
+        if (char == " ") {
             newTitle += "+";
         } else {
             newTitle += char;
@@ -314,21 +353,27 @@ function nameToSearchTerm(title){
     return newTitle;
 }
 
-// Function for search bar
-async function searchMovie(title){
-    try{
-        var movieList = [nameToSearchTerm(title)];
-        await fetchMovieData(movieList,allFeaturedMovies);
-        var movieDetails = allFeaturedMovies[allFeaturedMovies.length - 1];
-        displayMovieDetails(movieDetails["Poster"]);
-        displayActiveArticle(2);
-    } catch (error){
-        console.log(error);
-        console.log("Not able to search for the movie");
+async function displaySuggestedSearchResult(searchText) {
+    try {
+        var topTen = await fetchSuggestedSearchResults(searchText);
+
+        var searchContainer = document.querySelector("#searchIcon>div");
+        searchContainer.innerHTML = "";
+        for (var i = 0; i < topTen.length; i++) {
+            var newSearchResult = document.createElement("div");
+            newSearchResult.setAttribute("id", movieTitleToID(topTen[i]["Title"]));
+            newSearchResult.textContent = topTen[i]["Title"] + "  (" + topTen[i]["Year"] + ")";
+            searchContainer.appendChild(newSearchResult);
+        }
+    } catch {
+        console.log("Cannot display suggested search results");
     }
 }
 
-// Hello World
+function removeSuggestedSearchFromUI() {
+    var searchContainer = document.querySelector("#searchIcon>div");
+    searchContainer.innerHTML = "";
+}
 
 // Event Deligation
 function eventDeligation(event) {
@@ -343,6 +388,11 @@ function eventDeligation(event) {
 
     if (event.target.tagName == "BUTTON" && event.target.textContent == "Add To Favourites") {
         addToFavourites(event.target.getAttribute("id"));
+    }
+
+    if (event.target.parentNode.getAttribute("id") == "searchResults") {
+        searchMovieByTitle(event.target.getAttribute("id"));
+        showHideSearchBar();
     }
 }
 window.addEventListener("click", eventDeligation);
